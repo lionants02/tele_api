@@ -48,13 +48,22 @@ fun Application.configureVdoRouting() {
             val joinQueue = call.receive<JoinQueueData>()
             call.respond(JoinController.instant.post(joinQueue))
         }
+        get("/join/queue") {
+            val queueCode = call.request.queryParameters["queue_code"]
+            require(!queueCode.isNullOrBlank()){"ข้อมูล queue_code มีค่าว่าง"}
+            call.respond(JoinController.instant.get(queueCode))
+        }
+
         get("/join/queue/{queue_code}") {
             val queueCode = call.parameters["queue_code"]
-            require(!queueCode.isNullOrBlank()) { "มีค่าว่าง" }
+            require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
             call.respond(JoinController.instant.get(queueCode))
         }
         get("/join/queue_input_test") {
             call.respond(JoinController.instant.getTest())
+        }
+        get("/join/queue_response_test") {
+            call.respond(JoinController.instant.getResponseTest())
         }
     }
 }

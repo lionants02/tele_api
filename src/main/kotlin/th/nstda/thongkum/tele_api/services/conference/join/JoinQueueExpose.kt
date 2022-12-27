@@ -6,8 +6,8 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 
 object JoinQueueExpose : Table() {
     val queue_code = varchar("queue_code", 30).uniqueIndex()
-    val reservation_date = datetime("reservation_date")
-    val reservation_time = datetime("reservation_time")
+    val start_time = datetime("start_time")
+    val end_time = datetime("end_time")
     val link_join = varchar("link_join", 255)
     val api_vdo = varchar("api_vdo", 100)
     val secret_vdo = varchar("secret_vdo", 100)
@@ -15,8 +15,8 @@ object JoinQueueExpose : Table() {
     fun mapResultResponse(result: ResultRow): JoinQueueResponse {
         val joinQueueData = JoinQueueData(
             result[queue_code],
-            result[reservation_date],
-            result[reservation_time]
+            result[start_time],
+            result[end_time]
         )
         return JoinQueueResponse(
             joinQueueData,
@@ -28,8 +28,8 @@ object JoinQueueExpose : Table() {
     fun mapResultSystem(result: ResultRow): JoinQueueSystemResponse {
         val joinQueueData = JoinQueueData(
             result[queue_code],
-            result[reservation_date],
-            result[reservation_time]
+            result[start_time],
+            result[end_time]
         )
         return JoinQueueSystemResponse(
             joinQueueData,

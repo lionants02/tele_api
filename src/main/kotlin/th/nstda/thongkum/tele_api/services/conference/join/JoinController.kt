@@ -12,12 +12,22 @@ import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.services.conference.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class JoinController : HikariCPConnection() {
     fun getTest(): JoinQueueData {
         val nowUTC = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val nowBangkok = Clock.System.now().plus(7.hours).toLocalDateTime(TimeZone.UTC)
         return JoinQueueData("test", nowUTC, nowBangkok)
+    }
+
+    fun getResponseTest(): JoinQueueResponse {
+        val inputData = getTest()
+        return JoinQueueResponse(
+            inputData,
+            Clock.System.now().plus(7.minutes).toLocalDateTime(TimeZone.UTC),
+            "https://examle.hii.in.th/${inputData.queue_code}"
+        )
     }
 
     fun get(queueCode: String): JoinQueueResponse {
@@ -36,8 +46,8 @@ class JoinController : HikariCPConnection() {
             SchemaUtils.create(JoinQueueExpose)
             JoinQueueExpose.insert {
                 it[queue_code] = join.queue_code
-                it[reservation_date] = join.reservation_date
-                it[reservation_time] = join.reservation_time
+                it[start_time] = join.start_time
+                it[end_time] = join.end_time
                 it[link_join] = createLinkJoin
                 it[api_vdo] = vdoServer.api
                 it[secret_vdo] = vdoServer.secret

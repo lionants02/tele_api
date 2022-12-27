@@ -6,6 +6,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class JoinQueueData(
     var queue_code: String,
-    var reservation_date: LocalDateTime,
-    var reservation_time: LocalDateTime
+    var start_time: LocalDateTime,
+    var end_time: LocalDateTime
 )
