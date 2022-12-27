@@ -1,0 +1,1 @@
+rootProject.name = "th.nstda.thongkum.tele_api"
