@@ -1,8 +1,11 @@
 package th.nstda.thongkum.tele_api.services.conference
 
 import io.ktor.server.application.*
+import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import th.nstda.thongkum.tele_api.services.conference.join.JoinController
+import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueData
 
 fun Application.configureVdoRouting() {
 
@@ -37,6 +40,21 @@ fun Application.configureVdoRouting() {
             val orgId = call.parameters["org_id"]
             val roomId = call.parameters["room_id"]
             call.respondText("Join room org $orgId room $roomId")
+        }
+        /**
+         * สร้างห้องภายใน org นี้
+         */
+        post("/join/queue") {
+            val joinQueue = call.receive<JoinQueueData>()
+            call.respond(JoinController.instant.post(joinQueue))
+        }
+        get("/join/queue/{queue_code}") {
+            val queueCode = call.parameters["queue_code"]
+            require(!queueCode.isNullOrBlank()) { "มีค่าว่าง" }
+            call.respond(JoinController.instant.get(queueCode))
+        }
+        get("/join/queue_input_test") {
+            call.respond(JoinController.instant.getTest())
         }
     }
 }
