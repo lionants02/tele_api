@@ -103,13 +103,17 @@
                 }
             },
             "get": {
-                "description": "ดูข้อมูล queue_code",
+                "tags": [
+                    "Create Service"
+                ],
+                "description": "ดูข้อมูลห้องประชุม ที่เคยสร้างไว้",
+                "summary": "ดูข้อมูลห้องประชุม",
                 "parameters": [
                     {
                         "name": "queue_code",
                         "in": "query",
                         "description": "รหัส queue_code ที่เคยสร้างไว้",
-                        "required": true,
+                        "required": false,
                         "schema":{
                             "type": "string",
                             "example":"sddfe453q"
@@ -122,7 +126,10 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "$ref": "#/components/schemas/joinQueueResponse"
+                                    "type":"array",
+                                    "items":{
+                                        "$ref": "#/components/schemas/joinQueueResponse"
+                                    }
                                 }
                             }
                         }
