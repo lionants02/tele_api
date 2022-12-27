@@ -1,0 +1,140 @@
+{
+    "openapi": "3.0.2",
+    "info": {
+        "title": "tele-api",
+        "version": "0.1",
+        "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0"
+    },
+    "servers": [
+        {
+            "url": "https://api.server.test/v1"
+        }
+    ],
+    "security": [
+        {
+            "api_key": []
+        }
+    ],
+    "components": {
+        "securitySchemes": {
+            "name": {
+                "type": "apiKey",
+                "name": "api_key",
+                "in": "header"
+            }
+        },
+        "schemas": {
+            "joinQueueRequest": {
+                "type": "object",
+                "description": "ข้อมูลสำหรับขอสร้างห้อง vdo conference",
+                "properties": {
+                    "queue_code": {
+                        "type": "string",
+                        "description": "รหัส queue_code ต้องไม่ซ้ำกัน ถ้าซ้ำกันจะเป็นการ update ข้อมูลเดิม",
+                        "example": "sddfe453q"
+                    },
+                    "start_time": {
+                        "type": "string",
+                        "description": "เวลาเริ่มใช้ห้อง vdo รูปแบบเวลา UTC+0",
+                        "example": "2022-12-27T15:08:51.716579500"
+                    },
+                    "end_time": {
+                        "type": "string",
+                        "description": "เวลาจบห้องประชุม รูปแบบเวลา UTC+0",
+                        "example": "2022-12-27T22:08:51.718584300"
+                    }
+                }
+            },
+            "joinQueueResponse": {
+                "type": "object",
+                "properties": {
+                    "property": {
+                        "$ref": "#/components/schemas/joinQueueRequest"
+                    },
+                    "createAt": {
+                        "type": "string",
+                        "description": "เวลาที่สร้าง object",
+                        "example": "2022-12-27T15:16:11.866697600"
+                    },
+                    "joinLink": {
+                        "type": "string",
+                        "description": "Link สำหรับเข้าห้องประชุม",
+                        "example": "https://examle.hii.in.th/test"
+                    }
+                }
+            }
+        }
+    },
+    "paths": {
+        "/join/queue": {
+            "post": {
+                "tags": [
+                    "Create Service"
+                ],
+                "description": "ขอสร้าง Link สำหรับใช้งานห้องประชุม",
+                "summary": "สร้าง Link ประชุม",
+                "security": [
+                    {
+                        "api_key": []
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/joinQueueRequest"
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": "ข้อมูลที่ใช้สรำหรับการสร้างห้องประชุม"
+                },
+                "responses": {
+                    "200": {
+                        "description": "ข้อมูลที่ใช้สำหรับเข้าห้องประชุม",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/joinQueueResponse"
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "get": {
+                "description": "ดูข้อมูล queue_code",
+                "parameters": [
+                    {
+                        "name": "queue_code",
+                        "in": "query",
+                        "description": "รหัส queue_code ที่เคยสร้างไว้",
+                        "required": true,
+                        "schema":{
+                            "type": "string",
+                            "example":"sddfe453q"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ข้อมูลการสร้างห้องประชุม",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/joinQueueResponse"
+                                }
+                            }
+                        }
+                    },
+                    "500":{
+                        "description": "Server Error"
+                    },
+                    "404":{
+                        "description": "ไม่พบข้อมูล"
+                    }
+                }
+            }
+        }
+    }
+}
