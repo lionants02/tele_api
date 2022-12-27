@@ -4,13 +4,12 @@ import io.ktor.server.routing.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.json.Json
 import th.nstda.thongkum.tele_api.getLogger
 
 fun Application.configureRouting() {
     routing {
         get("/") {
-            getLogger(this::class.java).info("ทดสอบไทย")
+            getLogger(this::class.java).info("test Thai ทดสอบไทย")
             val response = Detail(
                 "Apache License 2.0",
                 "http://www.apache.org/licenses/",
@@ -18,6 +17,9 @@ fun Application.configureRouting() {
                 arrayOf(Contributor("Thanachai Thongkum", "https://github.com/lionants02"))
             )
             call.respond(response)
+        }
+        get("/test") {
+            call.respond("Hello World!")
         }
 
     }
@@ -30,6 +32,6 @@ internal data class Contributor(val name: String, val url: String)
 internal data class Detail(
     val license: String,
     val licenseUrl: String,
-    val docUrl:String,
+    val docUrl: String,
     val developers: Array<Contributor>
 )
