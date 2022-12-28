@@ -1,0 +1,35 @@
+# docker stack deploy -c ./timescale-stack.yml homeward_timescale
+version: "3.4"
+services:
+  tele_api:
+    image: "lionants02/tele_api:a1"
+    restart: always
+    ports:
+      - "12384:8080"
+    volumes:
+      - "./db.properties:/nstda/tele_api/hikarisimple.properties:ro"
+    env_file: ./.env
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 2100M
+  tele_db:
+    image: "postgres:12.13-alpine3.17"
+    restart: always
+    ports:
+      - "5432:5432"
+    volumes:
+      - "./data:/var/lib/postgresql/data:rw"
+    env_file: ./.env
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '4'
+          memory: 2100M
