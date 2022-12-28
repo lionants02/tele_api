@@ -57,6 +57,10 @@ dependencies {
     // Core api server
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_date_time")
     implementation("args4j:args4j:2.33")
+    implementation("io.ktor:ktor-client-core:$ktor_version")
+    implementation("io.ktor:ktor-client-cio:$ktor_version")
+    implementation("io.ktor:ktor-client-logging:$ktor_version")
+    implementation("io.ktor:ktor-client-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-server-caching-headers-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-forwarded-header-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-cors-jvm:$ktor_version")

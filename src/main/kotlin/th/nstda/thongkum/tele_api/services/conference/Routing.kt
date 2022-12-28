@@ -4,8 +4,10 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueData
+import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 
 fun Application.configureVdoRouting() {
 
@@ -19,7 +21,7 @@ fun Application.configureVdoRouting() {
         }
         get("/join/queue") {
             val queueCode = call.request.queryParameters["queue_code"]
-            require(!queueCode.isNullOrBlank()){"ข้อมูล queue_code มีค่าว่าง"}
+            require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
             call.respond(JoinController.instant.get(queueCode))
         }
 
@@ -34,5 +36,15 @@ fun Application.configureVdoRouting() {
         get("/join/queue_response_test") {
             call.respond(JoinController.instant.getResponseTest())
         }
+        /**
+         * Vdo
+         */
+        get("/vdo/session/{session_name}/webrtctoken") {
+            getLogger(this::class.java).info("Call webrtctoken")
+            val sessionName = call.parameters["session_name"]!!
+            val token = VdoServerController.instant.createUserWebRTCToken(sessionName)
+            call.respond(token)
+        }
+
     }
 }

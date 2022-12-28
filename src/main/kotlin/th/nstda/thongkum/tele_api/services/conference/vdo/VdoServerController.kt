@@ -14,6 +14,8 @@ import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueSystemResponse
+import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduRest
+import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduSecret
 
 class VdoServerController : HikariCPConnection() {
     fun getServer(): VdoServerData {
@@ -28,13 +30,20 @@ class VdoServerController : HikariCPConnection() {
         return servers.first()
     }
 
+    /**
+     * สร้างห้องประชุม vdo
+     */
     fun creteSession(sessionName: String) {
-        val check = JoinController.instant.getSystemDetail(sessionName)
+        val check: JoinQueueSystemResponse = JoinController.instant.getSystemDetail(sessionName)
+        creteSession(sessionName, check)
+    }
+
+    fun creteSession(sessionName: String, check: JoinQueueSystemResponse) {
         val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         require(checkTime(check, now)) { "อยู่ขอบเขตนอกเวลาที่สร้างห้อง out of datetime" }
 
-        val vidu = OpenVidu(check.apiVdo, check.secretVdo)
-        if (vidu.getActiveSession(sessionName)?.sessionId == sessionName) {
+        val myVidu = ViduRest(ViduSecret(check.apiVdo, check.secretVdo))
+        if (myVidu.haveSession(sessionName)) {
             log.warn("มี session $sessionName อยู่ในระบบแล้ว have session $sessionName in system")
             return
         }
@@ -43,9 +52,17 @@ class VdoServerController : HikariCPConnection() {
             .customSessionId(sessionName)
             .recordingMode(RecordingMode.MANUAL)
             .build()
+        val vidu = OpenVidu(check.apiVdo, check.secretVdo)
         val session = vidu.createSession(properties)
 
         log.info("Create session ${session.sessionId} create at ${session.createdAt()}")
+    }
+
+    fun createUserWebRTCToken(sessionName: String): String {
+        val check = JoinController.instant.getSystemDetail(sessionName)
+        creteSession(sessionName, check)
+        val myVidu = ViduRest(ViduSecret(check.apiVdo, check.secretVdo))
+        return myVidu.getConnection(sessionName, "x")
     }
 
     /**

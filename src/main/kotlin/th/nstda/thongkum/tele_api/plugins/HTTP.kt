@@ -25,7 +25,13 @@ fun Application.configureHTTP() {
         allowMethod(HttpMethod.Patch)
         allowHeader(HttpHeaders.Authorization)
         allowHeader("MyCustomHeader")
-        anyHost() // @TODO: Don't do this in production if possible. Try to limit it.
+        allowHeader(HttpHeaders.AccessControlAllowHeaders)
+        allowHeader(HttpHeaders.ContentType)
+        allowHeader(HttpHeaders.AccessControlAllowOrigin)
+        allowHeader(HttpHeaders.Cookie)
+        allowCredentials = true
+        maxAgeInSeconds = 1
+        anyHost()
     }
     // openAPI(path="openapi")
 
