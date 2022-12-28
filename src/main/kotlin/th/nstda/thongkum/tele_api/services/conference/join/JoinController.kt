@@ -15,12 +15,18 @@ import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 
 class JoinController : HikariCPConnection() {
+    /**
+     * ตัวอย่างรูปแบบข้อมูล ตอน input
+     */
     fun getTest(): JoinQueueData {
         val nowUTC = Clock.System.now().toLocalDateTime(TimeZone.UTC)
         val nowBangkok = Clock.System.now().plus(7.hours).toLocalDateTime(TimeZone.UTC)
         return JoinQueueData("test", nowUTC, nowBangkok)
     }
 
+    /**
+     * ตัวอย่างรูปแบบข้อมูล ตอน response
+     */
     fun getResponseTest(): JoinQueueResponse {
         val inputData = getTest()
         return JoinQueueResponse(
@@ -30,6 +36,9 @@ class JoinController : HikariCPConnection() {
         )
     }
 
+    /**
+     * ดึงข้อมูล queue code
+     */
     fun get(queueCode: String): JoinQueueResponse {
         return transaction {
             JoinQueueExpose.select(JoinQueueExpose.queue_code eq queueCode).limit(1).map {
@@ -38,6 +47,9 @@ class JoinController : HikariCPConnection() {
         }
     }
 
+    /**
+     * ข้อมูลสำหรับการจองใช้ vdo conference
+     */
     fun post(join: JoinQueueData): JoinQueueResponse {
         require(join.queue_code.isNotBlank()) { "queue code มีค่าว่าง" }
         val vdoServer = VdoServerController.instant.getServer()

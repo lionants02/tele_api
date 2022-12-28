@@ -1,5 +1,8 @@
 package th.nstda.thongkum.tele_api.config
 
+/**
+ * สำหรับอ้างอิง ในระบบดึงค่าตัวแปรต่างๆ จากระบบ
+ */
 interface Config {
     val openviduDefaultUrl: String
     val openviduDefaultSecret: String

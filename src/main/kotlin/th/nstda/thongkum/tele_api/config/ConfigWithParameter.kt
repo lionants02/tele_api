@@ -16,17 +16,22 @@ class ConfigWithParameter(args: Array<String>) : Config {
     @Option(name = "-hikarifile", usage = "hikari config file")
     private var _hikariConfigFile = ""
 
+    @Option(name = "-front_end", usage = "front end link https://example.hii.in.th")
+    private var _frontEnd = ""
 
     override val openviduDefaultUrl: String
         get() = _openviduDefaultUrl.ifBlank { System.getenv("VIDU_DEFAULT_URL") }
+            .ifBlank { throw Exception("VIDU_DEFAULT_URL Bank") }
     override val openviduDefaultSecret: String
         get() = _openviduDefaultSecret.ifBlank { System.getenv("VIDU_SECRET") }
+            .ifBlank { throw Exception("VIDU_SECRET Bank") }
 
     override val hikariConfigFile: String
         get() = _hikariConfigFile.ifBlank { System.getenv("HIKARI_CONFIG_FILE") }
+            .ifBlank { throw Exception("HIKARI_CONFIG_FILE Bank") }
 
     override val frontEnd: String
-        get() = "https://example.hii.in.th"
+        get() = _frontEnd.ifBlank { System.getenv("TELE_FRONT_END") }.ifBlank { "https://example.hii.in.th" }
 
     init {
         try {

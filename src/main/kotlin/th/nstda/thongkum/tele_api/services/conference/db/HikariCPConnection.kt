@@ -8,7 +8,9 @@ import th.nstda.thongkum.tele_api.getLogger
 import java.io.File
 import javax.sql.DataSource
 
-
+/**
+ * ใช้สำหรับเชื่อมต่อ database
+ */
 abstract class HikariCPConnection {
     init {
         try {
