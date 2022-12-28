@@ -1,12 +1,20 @@
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
+val exposed_version: String by project
+val vidu_java_client: String by project
+val hikaricp: String by project
+val pgjdbc: String by project
+val kotlin_date_time: String by project
 
 plugins {
     kotlin("jvm") version "1.7.22"
     id("io.ktor.plugin") version "2.2.1"
                 id("org.jetbrains.kotlin.plugin.serialization") version "1.7.22"
     application
+}
+kotlin {
+    jvmToolchain(17)
 }
 
 group = "th.nstda.thongkum.tele_api"
@@ -24,7 +32,7 @@ repositories {
 
 dependencies {
     // VDO server client
-    implementation("io.openvidu:openvidu-java-client:2.24.0")
+    implementation("io.openvidu:openvidu-java-client:$vidu_java_client")
 }
 
 dependencies {
@@ -35,8 +43,19 @@ dependencies {
 }
 
 dependencies {
+    // Database
+    implementation("org.jetbrains.exposed:exposed-core:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-dao:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-jdbc:$exposed_version")
+    implementation("org.jetbrains.exposed:exposed-kotlin-datetime:$exposed_version")
+    implementation("com.zaxxer:HikariCP:$hikaricp")
+    implementation("org.postgresql:postgresql:$pgjdbc")
+}
+
+dependencies {
 
     // Core api server
+    implementation("org.jetbrains.kotlinx:kotlinx-datetime:$kotlin_date_time")
     implementation("args4j:args4j:2.33")
     implementation("io.ktor:ktor-server-caching-headers-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-forwarded-header-jvm:$ktor_version")
