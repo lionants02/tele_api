@@ -12,14 +12,14 @@
     ],
     "security": [
         {
-            "api_key": []
+            "api-key": []
         }
     ],
     "components": {
         "securitySchemes": {
             "name": {
                 "type": "apiKey",
-                "name": "api_key",
+                "name": "api-key",
                 "in": "header"
             }
         },
@@ -75,7 +75,7 @@
                 "summary": "สร้าง Link ประชุม",
                 "security": [
                     {
-                        "api_key": []
+                        "api-key": []
                     }
                 ],
                 "requestBody": {
