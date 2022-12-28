@@ -61,7 +61,7 @@ class JoinController : HikariCPConnection() {
     fun post(join: JoinQueueData): JoinQueueResponse {
         require(join.queue_code.isNotBlank()) { "queue code มีค่าว่าง" }
         val vdoServer = VdoServerController.instant.getServer()
-        val createLinkJoin = "${config.frontEnd}/${join.queue_code}"
+        val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
         transaction {
             SchemaUtils.create(JoinQueueExpose)
             JoinQueueExpose.insert {
