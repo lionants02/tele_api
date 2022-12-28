@@ -19,6 +19,9 @@ class ConfigWithParameter(args: Array<String>) : Config {
     @Option(name = "-front_end", usage = "front end link https://example.hii.in.th")
     private var _frontEnd = ""
 
+    @Option(name = "-api_key", usage = "api_key")
+    private var _apiKey = ""
+
     override val openviduDefaultUrl: String
         get() = _openviduDefaultUrl.ifBlank { System.getenv("VIDU_DEFAULT_URL") }
             .ifBlank { throw Exception("VIDU_DEFAULT_URL Bank") }
@@ -32,6 +35,9 @@ class ConfigWithParameter(args: Array<String>) : Config {
 
     override val frontEnd: String
         get() = _frontEnd.ifBlank { System.getenv("TELE_FRONT_END") }.ifBlank { "https://example.hii.in.th" }
+
+    override val apiKey: String
+        get() = _apiKey.ifBlank { System.getenv("API_KEY") }.ifBlank { "bBIFF5zkWq2oleJTVV1OviKCvSFkSCrguHGB" }
 
     init {
         try {
