@@ -47,6 +47,14 @@ class JoinController : HikariCPConnection() {
         }
     }
 
+    fun getSystemDetail(queueCode: String): JoinQueueSystemResponse {
+        return transaction {
+            JoinQueueExpose.select(JoinQueueExpose.queue_code eq queueCode).limit(1).map {
+                JoinQueueExpose.mapResultSystem(it)
+            }.first()
+        }
+    }
+
     /**
      * ข้อมูลสำหรับการจองใช้ vdo conference
      */
