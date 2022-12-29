@@ -9,7 +9,7 @@ interface ActivityLog {
     }
 
     enum class ACTIVITY {
-        CREATE, UPDATE, DELETE
+        CREATE, UPDATE, DELETE, TOKEN
     }
 
 }
