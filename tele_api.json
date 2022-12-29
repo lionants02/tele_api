@@ -1,7 +1,7 @@
 {
     "openapi": "3.0.2",
     "info": {
-        "title": "tele-api",
+        "title": "api",
         "version": "0.1",
         "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0"
     },
@@ -17,10 +17,11 @@
     ],
     "components": {
         "securitySchemes": {
-            "name": {
+            "api-key": {
                 "type": "apiKey",
                 "name": "api-key",
-                "in": "header"
+                "in": "header",
+                "description": "api-key สำหรับใช้งาน api"
             }
         },
         "schemas": {
