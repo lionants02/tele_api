@@ -16,8 +16,7 @@ abstract class HikariCPConnectionActivityLog {
         try {
             Database.connect(ds)
         } catch (ex: Exception) {
-            getLogger(HikariCPConnectionActivityLog::class.java).error(ex.message, ex)
-            throw ex
+            getLogger(HikariCPConnectionActivityLog::class.java).warn(ex.message, ex)
         }
     }
 
