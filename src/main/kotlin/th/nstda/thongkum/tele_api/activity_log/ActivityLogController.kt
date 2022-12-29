@@ -4,10 +4,10 @@ import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.transactions.transaction
-import th.nstda.thongkum.tele_api.db.HikariCPConnectionActivityLog
+import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.getLogger
 
-class ActivityLogController : ActivityLog, HikariCPConnectionActivityLog() {
+class ActivityLogController : ActivityLog, HikariCPConnection() {
     override fun log(type: ActivityLog.TYPE, message: () -> String) {
         try {
             transaction {

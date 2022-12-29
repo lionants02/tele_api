@@ -16,9 +16,6 @@ class ConfigWithParameter(args: Array<String>) : Config {
     @Option(name = "-hikarifile", usage = "hikari config file")
     private var _hikariConfigFile = ""
 
-    @Option(name = "-hikariactivityfile", usage = "hikari activity config file")
-    private var _hikariActivityFile = ""
-
     @Option(name = "-front_end", usage = "front end link https://example.hii.in.th")
     private var _frontEnd = ""
 
@@ -42,9 +39,6 @@ class ConfigWithParameter(args: Array<String>) : Config {
 
     override val apiKey: String
         get() = _apiKey.ifBlank { "API_KEY".systemEnv }.ifBlank { "bBIFF5zkWq2oleJTVV1OviKCvSFkSCrguHGB" }
-
-    override val hikariActivityLog: String
-        get() = _hikariActivityFile.ifBlank { "HIKARI_CONFIG_ACTIFITY_FILE".systemEnv }.ifBlank { _hikariConfigFile }
 
     private val String.systemEnv: String
         get() = System.getenv(this) ?: ""
