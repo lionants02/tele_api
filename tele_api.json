@@ -74,9 +74,121 @@
                 ],
                 "description": "ขอสร้าง Link สำหรับใช้งานห้องประชุม",
                 "summary": "สร้าง Link ประชุม",
-                "security": [
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/joinQueueRequest"
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": "ข้อมูลที่ใช้สรำหรับการสร้างห้องประชุม"
+                },
+                "responses": {
+                    "201": {
+                        "description": "ข้อมูลที่ใช้สำหรับเข้าห้องประชุม",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/joinQueueResponse"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "รหัส queue_code อาจจะซ้ำ ดูจาก message"
+                    },
+                    "500":{
+                        "description": "Server Error"
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Create Service"
+                ],
+                "description": "ดูข้อมูลห้องประชุม ที่เคยสร้างไว้",
+                "summary": "ดูข้อมูลห้องประชุม",
+                "parameters": [
                     {
-                        "api-key": []
+                        "name": "queue_code",
+                        "in": "query",
+                        "description": "รหัส queue_code ที่เคยสร้างไว้",
+                        "required": false,
+                        "schema": {
+                            "type": "string",
+                            "example": "sddfe453q"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "ข้อมูลการสร้างห้องประชุม",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/joinQueueResponse"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "description": "Server Error"
+                    },
+                    "404": {
+                        "description": "ไม่พบข้อมูล"
+                    }
+                }
+            }
+        },
+        "/join/queue/{queue_code}": {
+            "delete": {
+                "tags": [
+                    "ยังไม่ได้พัฒนา"
+                ],
+                "summary": "ยกเลิก queue_code",
+                "description": "ยกเลิก queue_code เป็นเพียง flag ใน database เท่านั้น ไม่ได้ยกเลิกจริง",
+                "parameters": [
+                    {
+                        "name": "queue_code",
+                        "in": "path",
+                        "description": "รหัส queue_code ที่เคยสร้างไว้",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sddfe453q"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    },
+                    "404": {
+                        "description": "ไม่พบ queue_code"
+                    }
+                }
+            },
+            "put": {
+                "tags": [
+                    "ยังไม่ได้พัฒนา"
+                ],
+                "summary": "อัพเดทข้อมูล queue_code",
+                "description": "อัพเดทข้อมูล queue_code",
+                "parameters": [
+                    {
+                        "name": "queue_code",
+                        "in": "path",
+                        "description": "รหัส queue_code ที่เคยสร้างไว้",
+                        "required": true,
+                        "schema": {
+                            "type": "string",
+                            "example": "sddfe453q"
+                        }
                     }
                 ],
                 "requestBody": {
@@ -101,48 +213,14 @@
                             }
                         }
                     },
-                    "400":{
-                        "description": "รหัส queue_code อาจจะซ้ำ ดูจาก message"
-                    }
-                }
-            },
-            "get": {
-                "tags": [
-                    "Create Service"
-                ],
-                "description": "ดูข้อมูลห้องประชุม ที่เคยสร้างไว้",
-                "summary": "ดูข้อมูลห้องประชุม",
-                "parameters": [
-                    {
-                        "name": "queue_code",
-                        "in": "query",
-                        "description": "รหัส queue_code ที่เคยสร้างไว้",
-                        "required": false,
-                        "schema":{
-                            "type": "string",
-                            "example":"sddfe453q"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "ข้อมูลการสร้างห้องประชุม",
-                        "content": {
-                            "application/json": {
-                                "schema": {
-                                    "type":"array",
-                                    "items":{
-                                        "$ref": "#/components/schemas/joinQueueResponse"
-                                    }
-                                }
-                            }
-                        }
+                    "400": {
+                        "description": "Error อาจเป็นไปได้ว่า ข้อมูล queue_code ใน body ที่ส่งมาอัพเดทไม่ตรง กับที่อ้างอิงให้แก้ไข"
                     },
-                    "500":{
-                        "description": "Server Error"
+                    "404": {
+                        "description": "ไม่พบ queue_code"
                     },
-                    "404":{
-                        "description": "ไม่พบข้อมูล"
+                    "500": {
+                        "description": "Server Error "
                     }
                 }
             }
