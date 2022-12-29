@@ -1,5 +1,6 @@
 package th.nstda.thongkum.tele_api.services.conference.join
 
+import io.ktor.server.plugins.*
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
@@ -62,17 +63,26 @@ class JoinController : HikariCPConnection() {
         require(join.queue_code.isNotBlank()) { "queue code มีค่าว่าง" }
         val vdoServer = VdoServerController.instant.getServer()
         val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
-        transaction {
-            SchemaUtils.create(JoinQueueExpose)
-            JoinQueueExpose.insert {
-                it[queue_code] = join.queue_code
-                it[start_time] = join.start_time
-                it[end_time] = join.end_time
-                it[link_join] = createLinkJoin
-                it[api_vdo] = vdoServer.api
-                it[secret_vdo] = vdoServer.secret
-                it[createAt] = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        try {
+            transaction {
+                SchemaUtils.create(JoinQueueExpose)
+                JoinQueueExpose.insert {
+                    it[queue_code] = join.queue_code
+                    it[start_time] = join.start_time
+                    it[end_time] = join.end_time
+                    it[link_join] = createLinkJoin
+                    it[api_vdo] = vdoServer.api
+                    it[secret_vdo] = vdoServer.secret
+                    it[createAt] = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+                }
             }
+        } catch (ex: org.jetbrains.exposed.exceptions.ExposedSQLException) {
+            val message = ex.message
+            if (message?.contains("duplicate key value violates unique constraint \"joinqueueexpose_queue_code_unique\"") == true) {
+                print("Test error $message")
+                throw BadRequestException("Create duplicate queue code")
+            } else
+                throw ex
         }
         return get(join.queue_code)
     }
