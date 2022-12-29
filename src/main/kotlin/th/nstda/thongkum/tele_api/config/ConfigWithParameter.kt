@@ -44,7 +44,7 @@ class ConfigWithParameter(args: Array<String>) : Config {
         get() = _apiKey.ifBlank { "API_KEY".systemEnv }.ifBlank { "bBIFF5zkWq2oleJTVV1OviKCvSFkSCrguHGB" }
 
     override val hikariActivityLog: String
-        get() = _hikariActivityFile.ifBlank { "HIKARI_CONFIG_ACTIFITY_FILE".systemEnv }.ifBlank { "" }
+        get() = _hikariActivityFile.ifBlank { "HIKARI_CONFIG_ACTIFITY_FILE".systemEnv }.ifBlank { _hikariConfigFile }
 
     private val String.systemEnv: String
         get() = System.getenv(this) ?: ""
