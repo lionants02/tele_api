@@ -8,6 +8,7 @@ services:
       - "12384:8080"
     volumes:
       - "./db.properties:/nstda/tele_api/hikarisimple.properties:ro"
+      - "./db.properties:/nstda/tele_api/hikari_activity_log_db.properties:ro"
     env_file: ./.env
     deploy:
       resources:
