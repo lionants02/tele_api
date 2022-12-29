@@ -11,7 +11,7 @@ import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import th.nstda.thongkum.tele_api.getLogger
-import th.nstda.thongkum.tele_api.services.conference.db.HikariCPConnection
+import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueSystemResponse
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduRest
@@ -26,7 +26,7 @@ class VdoServerController : HikariCPConnection() {
             }.toList()
         }.toList()
 
-        val count = servers.size
+        // val count = servers.size
         return servers.first()
     }
 

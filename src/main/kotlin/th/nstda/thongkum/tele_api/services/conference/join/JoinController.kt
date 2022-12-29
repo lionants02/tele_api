@@ -10,7 +10,7 @@ import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
 import th.nstda.thongkum.tele_api.config
-import th.nstda.thongkum.tele_api.services.conference.db.HikariCPConnection
+import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
