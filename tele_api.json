@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://api.server.test/v1"
+            "url": "https://dev-api.hii.in.th"
         }
     ],
     "security": [
