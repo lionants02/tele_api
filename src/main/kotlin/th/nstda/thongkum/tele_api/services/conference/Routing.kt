@@ -1,5 +1,6 @@
 package th.nstda.thongkum.tele_api.services.conference
 
+import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
@@ -19,7 +20,7 @@ fun Application.configureVdoRouting() {
         post("/join/queue") {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
             val joinQueue = call.receive<JoinQueueData>()
-            call.respond(JoinController.instant.post(joinQueue))
+            call.respond(HttpStatusCode.Created, JoinController.instant.post(joinQueue))
         }
         get("/join/queue") {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
