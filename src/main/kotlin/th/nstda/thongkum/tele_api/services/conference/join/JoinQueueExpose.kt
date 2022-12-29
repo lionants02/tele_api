@@ -7,7 +7,7 @@ import org.jetbrains.exposed.sql.kotlin.datetime.datetime
 /**
  * ตัว Object ใข้สำหรับโครงสร้างใน Database
  */
-object JoinQueueExpose : Table() {
+internal object JoinQueueExpose : Table() {
     val queue_code = varchar("queue_code", 30).uniqueIndex()
     val start_time = datetime("start_time")
     val end_time = datetime("end_time")
