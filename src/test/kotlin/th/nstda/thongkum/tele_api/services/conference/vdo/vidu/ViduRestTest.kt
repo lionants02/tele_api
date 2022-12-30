@@ -24,4 +24,10 @@ class ViduRestTest {
         val check = dao.haveSession("12345101")
         assertEquals(true, check)
     }
+
+    @Test
+    fun getSession() {
+        val sessions = dao.getSessions()
+        println(sessions.first())
+    }
 }
