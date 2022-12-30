@@ -183,7 +183,7 @@
                     "Create Service"
                 ],
                 "summary": "อัพเดทข้อมูล queue_code",
-                "description": "อัพเดทข้อมูล queue_code",
+                "description": "อัพเดทข้อมูล queue_code โดยที่รหัส queue_code กับใน json body รหัส queue_code ต้องตรงกัน",
                 "parameters": [
                     {
                         "name": "queue_code",
