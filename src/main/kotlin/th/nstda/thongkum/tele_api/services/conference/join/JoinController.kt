@@ -63,6 +63,9 @@ class JoinController : HikariCPConnection() {
     fun post(join: JoinQueueData): JoinQueueResponse {
         require(join.queue_code.isNotBlank()) { "queue code มีค่าว่าง" }
         require(join.end_time >= join.start_time) { "Require end_time > start_time." }
+        val now = getNowUTC()
+        require(join.end_time >= now) { "Cannot crete queue_code ${join.queue_code} over end_time. now:$now <= ${join.end_time}" }
+
         val vdoServer = VdoServerController.instant.getServer()
         val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
         try {
@@ -75,8 +78,8 @@ class JoinController : HikariCPConnection() {
                     it[link_join] = createLinkJoin
                     it[api_vdo] = vdoServer.api
                     it[secret_vdo] = vdoServer.secret
-                    it[createAt] = getNowUTC()
-                    it[updateAt] = getNowUTC()
+                    it[createAt] = getNowTimestampUTC()
+                    it[updateAt] = getNowTimestampUTC()
                 }
             }
         } catch (ex: org.jetbrains.exposed.exceptions.ExposedSQLException) {
@@ -92,6 +95,10 @@ class JoinController : HikariCPConnection() {
     fun update(queueCode: String, join: JoinQueueData): JoinQueueResponse {
         require(queueCode == join.queue_code) { "ref queue_code != queue_code $queueCode != ${join.queue_code}" }
         require(join.end_time >= join.start_time) { "Require end_time > start_time." }
+        val oldJoin = get(queueCode)
+        val now = getNowUTC()
+        val oldEndTime = oldJoin.property.end_time
+        require(oldEndTime >= now) { "Cannot update queue_code $queueCode old object over end_time. now:$now <= old end_time:$oldEndTime" }
         val vdoServer = VdoServerController.instant.getServer()
         val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
         try {
@@ -103,7 +110,7 @@ class JoinController : HikariCPConnection() {
                     it[link_join] = createLinkJoin
                     it[api_vdo] = vdoServer.api
                     it[secret_vdo] = vdoServer.secret
-                    it[updateAt] = getNowUTC()
+                    it[updateAt] = getNowTimestampUTC()
                 }
             }
 
@@ -113,9 +120,11 @@ class JoinController : HikariCPConnection() {
         return get(join.queue_code)
     }
 
-    private fun getNowUTC(): Instant {
-        return Clock.System.now().toLocalDateTime(TimeZone.UTC).toInstant(TimeZone.UTC)
+    private fun getNowTimestampUTC(): Instant {
+        return getNowUTC().toInstant(TimeZone.UTC)
     }
+
+    private fun getNowUTC() = Clock.System.now().toLocalDateTime(TimeZone.UTC)
 
     companion object {
         val instant by lazy { JoinController() }
