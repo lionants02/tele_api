@@ -7,8 +7,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import th.nstda.thongkum.tele_api.activity_log.ActivityLog.ACTIVITY.CREATE
-import th.nstda.thongkum.tele_api.activity_log.ActivityLog.ACTIVITY.TOKEN
+import th.nstda.thongkum.tele_api.activity_log.ActivityLog.ACTIVITY.*
 import th.nstda.thongkum.tele_api.activity_log.ActivityLogController
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.getLogger
@@ -37,6 +36,23 @@ fun Application.configureVdoRouting() {
                     call.respond(HttpStatusCode.Created, create)
                 }
             }
+        }
+        put("/join/queue/{queue_code}") {
+            require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
+            val queueCode = call.parameters["queue_code"]
+            require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
+            val joinQueue = call.receive<JoinQueueData>()
+            val update = JoinController.instant.update(queueCode, joinQueue)
+            runBlocking {
+                launch {
+                    ActivityLogController.instant.logQueue(
+                        joinQueue.queue_code,
+                        UPDATE
+                    ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
+                }
+                launch { call.respond(HttpStatusCode.Created, update) }
+            }
+
         }
         get("/join/queue") {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }

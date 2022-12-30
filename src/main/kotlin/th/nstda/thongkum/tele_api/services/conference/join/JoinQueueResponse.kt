@@ -10,5 +10,6 @@ import kotlinx.serialization.Serializable
 data class JoinQueueResponse(
     val property: JoinQueueData,
     val createAt: LocalDateTime,
+    val updateAt: LocalDateTime,
     var joinLink: String
 )

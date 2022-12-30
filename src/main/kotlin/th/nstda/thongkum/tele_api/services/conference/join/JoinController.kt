@@ -1,14 +1,13 @@
 package th.nstda.thongkum.tele_api.services.conference.join
 
 import io.ktor.server.plugins.*
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import kotlinx.datetime.*
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.insert
 import org.jetbrains.exposed.sql.select
 import org.jetbrains.exposed.sql.transactions.transaction
+import org.jetbrains.exposed.sql.update
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
@@ -30,9 +29,11 @@ class JoinController : HikariCPConnection() {
      */
     fun getResponseTest(): JoinQueueResponse {
         val inputData = getTest()
+        val now = Clock.System.now().plus(7.minutes).toLocalDateTime(TimeZone.UTC)
         return JoinQueueResponse(
             inputData,
-            Clock.System.now().plus(7.minutes).toLocalDateTime(TimeZone.UTC),
+            now,
+            now,
             "https://examle.hii.in.th/${inputData.queue_code}"
         )
     }
@@ -73,18 +74,45 @@ class JoinController : HikariCPConnection() {
                     it[link_join] = createLinkJoin
                     it[api_vdo] = vdoServer.api
                     it[secret_vdo] = vdoServer.secret
-                    it[createAt] = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+                    it[createAt] = getNowUTC()
+                    it[updateAt] = getNowUTC()
                 }
             }
         } catch (ex: org.jetbrains.exposed.exceptions.ExposedSQLException) {
             val message = ex.message
             if (message?.contains("duplicate key value violates unique constraint \"joinqueueexpose_queue_code_unique\"") == true) {
-                print("Test error $message")
                 throw BadRequestException("Create duplicate queue code")
             } else
                 throw ex
         }
         return get(join.queue_code)
+    }
+
+    fun update(queueCode: String, join: JoinQueueData): JoinQueueResponse {
+        require(queueCode == join.queue_code) { "ref queue_code != queue_code $queueCode != ${join.queue_code}" }
+        val vdoServer = VdoServerController.instant.getServer()
+        val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
+        try {
+            transaction {
+                JoinQueueExpose.update({ JoinQueueExpose.queue_code eq queueCode }) {
+                    it[queue_code] = join.queue_code
+                    it[start_time] = join.start_time
+                    it[end_time] = join.end_time
+                    it[link_join] = createLinkJoin
+                    it[api_vdo] = vdoServer.api
+                    it[secret_vdo] = vdoServer.secret
+                    it[updateAt] = getNowUTC()
+                }
+            }
+
+        } catch (ex: Exception) {
+            throw ex
+        }
+        return get(join.queue_code)
+    }
+
+    private fun getNowUTC(): Instant {
+        return Clock.System.now().toLocalDateTime(TimeZone.UTC).toInstant(TimeZone.UTC)
     }
 
     companion object {

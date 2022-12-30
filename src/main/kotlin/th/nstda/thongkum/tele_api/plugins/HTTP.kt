@@ -50,6 +50,11 @@ fun Application.configureHTTP() {
                     ExceptionResponse(cause.message ?: "", HttpStatusCode.BadRequest.value)
                 )
 
+                is IllegalArgumentException -> call.respond(
+                    HttpStatusCode.BadRequest,
+                    ExceptionResponse("IllegalArgumentException ${cause.message}", HttpStatusCode.BadRequest.value)
+                )
+
                 is NoSuchElementException -> call.respond(
                     HttpStatusCode.NotFound,
                     ExceptionResponse(cause.message ?: "", HttpStatusCode.NotFound.value)
