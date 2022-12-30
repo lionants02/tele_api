@@ -26,11 +26,20 @@ class CronTaskController : CronTask {
             val sessionsOverTime = viduRest.getSessions().filter { sessionName ->
                 try {
                     val sessionConfig = JoinController.instant.get(sessionName)
-                    if (sessionConfig.property.start_time > now)
+                    if (sessionConfig.property.start_time > now) {
+                        log.info("Filter $sessionName is select")
                         true
-                    else sessionConfig.property.end_time < now
+                    } else if(sessionConfig.property.end_time < now){
+                        log.info("Filter $sessionName is select")
+                        true
+                    }
+                    else {
+                        log.info("Filter $sessionName is not select")
+                        false
+                    }
                 } catch (ex: Exception) {
                     // if error not select
+                    log.info("Filter $sessionName is error is false")
                     false
                 }
 

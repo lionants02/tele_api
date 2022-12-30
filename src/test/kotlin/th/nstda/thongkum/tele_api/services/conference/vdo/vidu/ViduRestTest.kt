@@ -30,4 +30,9 @@ class ViduRestTest {
         val sessions = dao.getSessions()
         println(sessions.first())
     }
+
+    @Test
+    fun closeSession() {
+        dao.closeSession("Mmmmmm")
+    }
 }
