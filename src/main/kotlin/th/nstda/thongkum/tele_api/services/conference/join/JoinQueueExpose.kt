@@ -20,6 +20,9 @@ internal object JoinQueueExpose : Table() {
     val createAt = timestamp("create_at")
     val updateAt = timestamp("update_at")
 
+    override val primaryKey: PrimaryKey
+        get() = PrimaryKey(queue_code)
+
     /**
      * ใช้สำหรับ แมพข้อมูลจาก record ใน database
      * ข้อมูลสำหรับคืนค่าไปยัง client จะตัดข้อมูลบางส่วนออก
