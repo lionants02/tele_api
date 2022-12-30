@@ -2,7 +2,7 @@
     "openapi": "3.0.2",
     "info": {
         "title": "api",
-        "version": "0.1",
+        "version": "0.2",
         "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0"
     },
     "servers": [
@@ -54,7 +54,12 @@
                     },
                     "createAt": {
                         "type": "string",
-                        "description": "เวลาที่สร้าง object",
+                        "description": "เวลาที่ create object",
+                        "example": "2022-12-27T15:16:11.866697600"
+                    },
+                    "updateAt": {
+                        "type": "string",
+                        "description": "เวลาที่ update object",
                         "example": "2022-12-27T15:16:11.866697600"
                     },
                     "joinLink": {
@@ -175,7 +180,7 @@
             },
             "put": {
                 "tags": [
-                    "ยังไม่ได้พัฒนา"
+                    "Create Service"
                 ],
                 "summary": "อัพเดทข้อมูล queue_code",
                 "description": "อัพเดทข้อมูล queue_code",
@@ -203,7 +208,7 @@
                     "description": "ข้อมูลที่ใช้สรำหรับการสร้างห้องประชุม"
                 },
                 "responses": {
-                    "200": {
+                    "201": {
                         "description": "ข้อมูลที่ใช้สำหรับเข้าห้องประชุม",
                         "content": {
                             "application/json": {
