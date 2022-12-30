@@ -81,7 +81,7 @@ class JoinController : HikariCPConnection() {
             }
         } catch (ex: org.jetbrains.exposed.exceptions.ExposedSQLException) {
             val message = ex.message
-            if (message?.contains("duplicate key value violates unique constraint \"joinqueueexpose_queue_code_unique\"") == true) {
+            if (message?.contains("duplicate key value violates unique constraint") == true) {
                 throw BadRequestException("Create duplicate queue code")
             } else
                 throw ex
