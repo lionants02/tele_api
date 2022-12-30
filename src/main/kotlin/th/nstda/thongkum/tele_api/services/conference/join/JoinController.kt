@@ -62,7 +62,7 @@ class JoinController : HikariCPConnection() {
      */
     fun post(join: JoinQueueData): JoinQueueResponse {
         require(join.queue_code.isNotBlank()) { "queue code มีค่าว่าง" }
-        require(join.end_time <= join.start_time) { "Require end_time > start_time." }
+        require(join.end_time >= join.start_time) { "Require end_time > start_time." }
         val vdoServer = VdoServerController.instant.getServer()
         val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
         try {
@@ -91,7 +91,7 @@ class JoinController : HikariCPConnection() {
 
     fun update(queueCode: String, join: JoinQueueData): JoinQueueResponse {
         require(queueCode == join.queue_code) { "ref queue_code != queue_code $queueCode != ${join.queue_code}" }
-        require(join.end_time <= join.start_time) { "Require end_time > start_time." }
+        require(join.end_time >= join.start_time) { "Require end_time > start_time." }
         val vdoServer = VdoServerController.instant.getServer()
         val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
         try {
