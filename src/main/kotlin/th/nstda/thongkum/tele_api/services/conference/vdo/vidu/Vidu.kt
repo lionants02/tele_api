@@ -4,4 +4,5 @@ interface Vidu {
     fun haveSession(sessionName: String): Boolean
     fun getConnection(sessionName: String, name: String): String
     fun getSessions(): List<String>
+    fun closeSession(sessionName: String)
 }

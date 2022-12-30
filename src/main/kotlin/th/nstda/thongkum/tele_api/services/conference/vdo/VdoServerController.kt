@@ -16,18 +16,22 @@ import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueSystemResponse
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduRest
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduSecret
+import kotlin.random.Random
 
 class VdoServerController : HikariCPConnection() {
     fun getServer(): VdoServerData {
-        val servers = transaction {
+        val servers = getServers()
+        val rnd = Random.nextInt(0, servers.size)
+        return servers[rnd]
+    }
+
+    fun getServers(): List<VdoServerData> {
+        return transaction {
             SchemaUtils.create(VdoServerExpose)
             VdoServerExpose.selectAll().map {
                 VdoServerExpose.mapResult(it)
             }.toList()
         }.toList()
-
-        // val count = servers.size
-        return servers.first()
     }
 
     /**

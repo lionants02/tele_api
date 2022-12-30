@@ -11,6 +11,7 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import th.nstda.thongkum.tele_api.getLogger
 
 class ViduRest(private val viduSecret: ViduSecret) : Vidu {
     override fun haveSession(sessionName: String): Boolean {
@@ -21,6 +22,15 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
             response.status
         }
         return status.isSuccess()
+    }
+
+    override fun closeSession(sessionName: String) {
+        runBlocking {
+            val response = httpClient.delete("${viduSecret.apiLink}/sessions/$sessionName") {
+                basicAuth("OPENVIDUAPP", viduSecret.secretVdo)
+            }
+            log.info("Close vidu session $sessionName is response ${response.status.description}:${response.status.value}")
+        }
     }
 
     override fun getConnection(sessionName: String, name: String): String {
@@ -48,7 +58,7 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
             require(response.status.isSuccess()) { "Cannot success ${response.status}" }
             val responseData: SessionProperty = response.body()
             responseData.content
-        }.filter { it.`object` == "session" }.mapNotNull { it.sessionId }
+        }.filter { it.`object` == "session" }.map { it.sessionId }
     }
 
     @Serializable
@@ -114,5 +124,6 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
                 }
             }
         }
+        private val log by lazy { getLogger(ViduRest::class.java) }
     }
 }

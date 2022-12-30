@@ -14,6 +14,7 @@ import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueData
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
+import th.nstda.thongkum.tele_api.services.cron.CronTaskController
 
 fun Application.configureVdoRouting() {
 
@@ -59,6 +60,12 @@ fun Application.configureVdoRouting() {
             val queueCode = call.request.queryParameters["queue_code"]
             require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
             call.respond(JoinController.instant.get(queueCode))
+        }
+
+        get("/cron") {
+            require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
+            CronTaskController().run()
+            call.respond(HttpStatusCode.OK, mapOf("status" to "ok"))
         }
 
         get("/join/queue/{queue_code}") {
