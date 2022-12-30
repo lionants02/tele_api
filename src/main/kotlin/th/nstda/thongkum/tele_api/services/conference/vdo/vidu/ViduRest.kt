@@ -39,6 +39,32 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
         }
     }
 
+    override fun getSessions(): List<String> {
+        return runBlocking {
+            val response = httpClient.get("${viduSecret.apiLink}/sessions") {
+                basicAuth("OPENVIDUAPP", viduSecret.secretVdo)
+                accept(ContentType.Application.Json)
+            }
+            require(response.status.isSuccess()) { "Cannot success ${response.status}" }
+            val responseData: SessionProperty = response.body()
+            responseData.content
+        }.filter { it.`object` == "session" }.mapNotNull { it.sessionId }
+    }
+
+    @Serializable
+    internal data class SessionProperty(
+        val numberOfElements: Int,
+        val content: Array<Session>
+    )
+
+    @Serializable
+    internal data class Session(
+        val id: String,
+        val sessionId: String,
+        val `object`: String,
+        val createdAt: Long
+    )
+
     @Serializable
     internal data class RequestConnection(
         val type: String,
