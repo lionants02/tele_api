@@ -37,7 +37,8 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
         return runBlocking {
 
             val kurentoOptions = KurentoOptions(1000, 100, 1000, 100)
-            val requestConnection = RequestConnection("WEBRTC", name, false, "PUBLISHER", kurentoOptions)
+            // val data ="{\"clientData\":\"Participant73\"}"
+            val requestConnection = RequestConnection("WEBRTC", null, false, "PUBLISHER", kurentoOptions)
             val response = httpClient.post("${viduSecret.apiLink}/sessions/$sessionName/connection") {
                 basicAuth("OPENVIDUAPP", viduSecret.secretVdo)
                 setBody(requestConnection)
@@ -78,7 +79,7 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
     @Serializable
     internal data class RequestConnection(
         val type: String,
-        val data: String,
+        val data: String?,
         val record: Boolean,
         val role: String,
         val kurentoOptions: KurentoOptions
