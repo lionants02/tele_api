@@ -67,7 +67,7 @@ class JoinController : HikariCPConnection() {
         require(join.end_time >= now) { "Cannot crete queue_code ${join.queue_code} over end_time. now:$now <= ${join.end_time}" }
 
         val vdoServer = VdoServerController.instant.getServer()
-        val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}"
+        val createLinkJoin = "${config.frontEnd}?t=${join.queue_code}&name=x"
         try {
             transaction {
                 SchemaUtils.create(JoinQueueExpose)
