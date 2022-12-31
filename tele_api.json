@@ -151,33 +151,6 @@
             }
         },
         "/join/queue/{queue_code}": {
-            "delete": {
-                "tags": [
-                    "ยังไม่ได้พัฒนา"
-                ],
-                "summary": "ยกเลิก queue_code",
-                "description": "ยกเลิก queue_code เป็นเพียง flag ใน database เท่านั้น ไม่ได้ยกเลิกจริง",
-                "parameters": [
-                    {
-                        "name": "queue_code",
-                        "in": "path",
-                        "description": "รหัส queue_code ที่เคยสร้างไว้",
-                        "required": true,
-                        "schema": {
-                            "type": "string",
-                            "example": "sddfe453q"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK"
-                    },
-                    "404": {
-                        "description": "ไม่พบ queue_code"
-                    }
-                }
-            },
             "put": {
                 "tags": [
                     "Create Service"
