@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://dev-api.hii.in.th"
+            "url": "https://tele-api.hii.in.th"
         }
     ],
     "security": [
