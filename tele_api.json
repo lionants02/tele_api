@@ -1,8 +1,8 @@
 {
-    "openapi": "3.0.2",
+    "openapi": "3.0.3",
     "info": {
         "title": "api",
-        "version": "0.2",
+        "version": "0.3",
         "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0"
     },
     "servers": [
@@ -42,7 +42,7 @@
                     "end_time": {
                         "type": "string",
                         "description": "เวลาจบห้องประชุม รูปแบบเวลา UTC+0",
-                        "example": "2022-12-27T22:08:51.718584300"
+                        "example": "2023-01-10T22:08:51.718584300"
                     }
                 }
             },
@@ -65,7 +65,7 @@
                     "joinLink": {
                         "type": "string",
                         "description": "Link สำหรับเข้าห้องประชุม",
-                        "example": "https://examle.hii.in.th/test"
+                        "example": "https://examle.hii.in.th/con/?t=tt0008&name=x"
                     }
                 }
             }
@@ -77,7 +77,7 @@
                 "tags": [
                     "Create Service"
                 ],
-                "description": "ขอสร้าง Link สำหรับใช้งานห้องประชุม",
+                "description": "ขอสร้าง Link สำหรับใช้งานห้องประชุม ใช้โซนเวลาเป็น UTC+0",
                 "summary": "สร้าง Link ประชุม",
                 "requestBody": {
                     "content": {
