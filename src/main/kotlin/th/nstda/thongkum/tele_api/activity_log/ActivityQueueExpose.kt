@@ -12,5 +12,9 @@ internal object ActivityQueueExpose : Table("activity_queue") {
      */
     val activity = varchar("activity", 10)
     val message = text("message")
+    val x_forwarded_for = varchar("x_forwarded_for", 50)
+    val cf_ipcountry = varchar("cf_ipcountry", 50)
+    val user_agent = text("user_agent")
+    val referer = text("referer")
 
 }

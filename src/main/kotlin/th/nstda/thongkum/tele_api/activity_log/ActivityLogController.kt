@@ -24,6 +24,15 @@ class ActivityLogController : ActivityLog, HikariCPConnection() {
     }
 
     override fun logQueue(queueCode: String, activity: ActivityLog.ACTIVITY, message: () -> String) {
+        logQueue(queueCode, activity, null, message)
+    }
+
+    override fun logQueue(
+        queueCode: String,
+        activity: ActivityLog.ACTIVITY,
+        activityHttpHeader: ActivityLog.ActivityHttpHeader?,
+        message: () -> String
+    ) {
         try {
             transaction {
                 SchemaUtils.create(ActivityQueueExpose)
@@ -32,6 +41,10 @@ class ActivityLogController : ActivityLog, HikariCPConnection() {
                     it[queue_code] = queueCode
                     it[ActivityQueueExpose.activity] = activity.name
                     it[ActivityQueueExpose.message] = message()
+                    it[x_forwarded_for] = activityHttpHeader?.x_forwarded_for ?: ""
+                    it[cf_ipcountry] = activityHttpHeader?.cf_ipcountry ?: ""
+                    it[user_agent] = activityHttpHeader?.user_agent ?: ""
+                    it[referer] = activityHttpHeader?.referer ?: ""
                 }
             }
         } catch (ex: Exception) {
@@ -44,7 +57,7 @@ class ActivityLogController : ActivityLog, HikariCPConnection() {
     }
 
     companion object {
-        val instant by lazy { ActivityLogController() }
+        val instant: ActivityLog by lazy { ActivityLogController() }
         private val log by lazy { getLogger(ActivityLogController::class.java) }
     }
 }

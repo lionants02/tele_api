@@ -8,6 +8,7 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import th.nstda.thongkum.tele_api.activity_log.ActivityLog.ACTIVITY.*
+import th.nstda.thongkum.tele_api.activity_log.ActivityLog.ActivityHttpHeader
 import th.nstda.thongkum.tele_api.activity_log.ActivityLogController
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.getLogger
@@ -29,8 +30,7 @@ fun Application.configureVdoRouting() {
             runBlocking {
                 launch {
                     ActivityLogController.instant.logQueue(
-                        joinQueue.queue_code,
-                        CREATE
+                        joinQueue.queue_code, CREATE, getHeaderLog(call)
                     ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
                 }
                 launch {
@@ -47,8 +47,7 @@ fun Application.configureVdoRouting() {
             runBlocking {
                 launch {
                     ActivityLogController.instant.logQueue(
-                        joinQueue.queue_code,
-                        UPDATE
+                        joinQueue.queue_code, UPDATE, getHeaderLog(call)
                     ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
                 }
                 launch { call.respond(HttpStatusCode.Created, update) }
@@ -89,7 +88,7 @@ fun Application.configureVdoRouting() {
             val token = VdoServerController.instant.createUserWebRTCToken(queue_code)
             runBlocking {
                 launch {
-                    ActivityLogController.instant.logQueue(queue_code, TOKEN) { "" }
+                    ActivityLogController.instant.logQueue(queue_code, TOKEN, getHeaderLog(call)) { "" }
                 }
                 launch {
                     call.respond(token)
@@ -98,4 +97,13 @@ fun Application.configureVdoRouting() {
         }
 
     }
+}
+
+private fun getHeaderLog(call: ApplicationCall): ActivityHttpHeader {
+    val req = call.request
+    val xForwardFor = req.header("X-Forwarded-For") ?: req.header("x-forwarded-for") ?: ""
+    val cfIpCountry = req.header("CF-IPCountry") ?: req.header("cf-ipcountry") ?: ""
+    val userAgent = req.header("User-Agent") ?: req.header("user-agent") ?: "" // User-Agent
+    val referer = req.header("Referer") ?: req.header("referer") ?: ""// Referer
+    return ActivityHttpHeader(xForwardFor, cfIpCountry, userAgent, referer)
 }
