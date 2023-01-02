@@ -97,6 +97,8 @@ fun Application.configureVdoRouting() {
             getLogger(this::class.java).info("Call webrtctoken")
             val header = getHeaderLog(call)
             require(!header.user_agent.contains("Line")) { "เปิดผ่าน Line ไม่ได้ Can't open line browser." }
+            require(!header.user_agent.contains("FB_IAB")) { "เปิดผ่าน Facebook message ไม่ได้ Can't open Facebook message browser." }
+            require(!header.user_agent.contains("FBAV")) { "เปิดผ่าน Facebook message ไม่ได้ Can't open Facebook message browser." }
             val queue_code = call.parameters["session_name"]!!
             val token = VdoServerController.instant.createUserWebRTCToken(queue_code)
 
