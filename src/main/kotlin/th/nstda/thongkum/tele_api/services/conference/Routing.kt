@@ -22,11 +22,6 @@ import th.nstda.thongkum.tele_api.services.cron.CronTaskController
 fun Application.configureVdoRouting() {
 
     routing {
-        install(CachingHeaders) {
-            this.options { call, content ->
-                CachingOptions(CacheControl.NoCache(null))
-            }
-        }
         /**
          * Join
          */
@@ -41,6 +36,7 @@ fun Application.configureVdoRouting() {
                     ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
                 }
                 launch {
+                    call.caching = CachingOptions(CacheControl.NoCache(null))
                     call.respond(HttpStatusCode.Created, create)
                 }
             }
@@ -57,7 +53,10 @@ fun Application.configureVdoRouting() {
                         joinQueue.queue_code, UPDATE, getHeaderLog(call)
                     ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
                 }
-                launch { call.respond(HttpStatusCode.Created, update) }
+                launch {
+                    call.caching = CachingOptions(CacheControl.NoCache(null))
+                    call.respond(HttpStatusCode.Created, update)
+                }
             }
 
         }
@@ -72,6 +71,7 @@ fun Application.configureVdoRouting() {
         get("/cron") {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
             CronTaskController().run()
+            call.caching = CachingOptions(CacheControl.NoCache(null))
             call.respond(HttpStatusCode.OK, mapOf("status" to "ok"))
         }
 
@@ -79,6 +79,7 @@ fun Application.configureVdoRouting() {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
             val queueCode = call.parameters["queue_code"]
             require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
+            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 300))
             call.respond(JoinController.instant.get(queueCode))
         }
         get("/join/queue_input_test") {
@@ -101,6 +102,7 @@ fun Application.configureVdoRouting() {
                     ActivityLogController.instant.logQueue(queue_code, TOKEN, getHeaderLog(call)) { "" }
                 }
                 launch {
+                    call.caching = CachingOptions(CacheControl.NoCache(null))
                     call.respond(token)
                 }
             }
