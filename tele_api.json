@@ -3,7 +3,7 @@
     "info": {
         "title": "api",
         "version": "0.3",
-        "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0 </br>การใช้งาน ต้องทำการ **สร้าง Link ประชุม** แล้วจะได้ **joinLink** สำหรับเรียกเข้าห้อง โดยที่ผู้ที่อยู้ห้องเดียวกันจะต้องมี Link **t=xxx** เดียวกัน โดยเมื่อหมดเวลาการใช้งาน ระบบจะตัดการเชื่อมต่อการเข้าห้องอัตโนมัติ</br><img src=\"assets/preview.gif\" width=\"200\" style=\"vertical-align:middle;text-align:center\">"
+        "description": "สำหรับรสร้างห้องประชุม VDO CONFERENCE ใช้งานบนเว็บ โดยวันที่เวลาที่ใช้จะเป็น UTC+0 </br>การใช้งาน ต้องทำการ **สร้าง Link ประชุม** แล้วจะได้ **joinLink** สำหรับเรียกเข้าห้อง โดยที่ผู้ที่อยู้ห้องเดียวกันจะต้องมี Link **t=xxx** เดียวกัน โดยเมื่อหมดเวลาการใช้งาน ระบบจะตัดการเชื่อมต่อการเข้าห้องอัตโนมัติ</br><img src=\"assets/preview.gif\" width=\"50%\" style=\"display:block;margin-left:auto;margin-right:auto;\">"
     },
     "servers": [
         {
