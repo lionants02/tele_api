@@ -95,11 +95,15 @@ fun Application.configureVdoRouting() {
          */
         get("/vdo/session/{session_name}/webrtctoken") {
             getLogger(this::class.java).info("Call webrtctoken")
+            val header = getHeaderLog(call)
+            require(!header.user_agent.contains("Line")) { "เปิดผ่าน Line ไม่ได้ Can't open line browser." }
             val queue_code = call.parameters["session_name"]!!
             val token = VdoServerController.instant.createUserWebRTCToken(queue_code)
+
+
             runBlocking {
                 launch {
-                    ActivityLogController.instant.logQueue(queue_code, TOKEN, getHeaderLog(call)) { "" }
+                    ActivityLogController.instant.logQueue(queue_code, TOKEN, header) { "" }
                 }
                 launch {
                     call.caching = CachingOptions(CacheControl.NoCache(null))
