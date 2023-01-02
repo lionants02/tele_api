@@ -1,7 +1,9 @@
 package th.nstda.thongkum.tele_api.services.conference
 
 import io.ktor.http.*
+import io.ktor.http.content.*
 import io.ktor.server.application.*
+import io.ktor.server.plugins.cachingheaders.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
@@ -20,6 +22,11 @@ import th.nstda.thongkum.tele_api.services.cron.CronTaskController
 fun Application.configureVdoRouting() {
 
     routing {
+        install(CachingHeaders) {
+            this.options { call, content ->
+                CachingOptions(CacheControl.NoCache(null))
+            }
+        }
         /**
          * Join
          */
@@ -58,6 +65,7 @@ fun Application.configureVdoRouting() {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
             val queueCode = call.request.queryParameters["queue_code"]
             require(!queueCode.isNullOrBlank()) { "ข้อมูล queue_code มีค่าว่าง" }
+            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 300))
             call.respond(JoinController.instant.get(queueCode))
         }
 
@@ -74,9 +82,11 @@ fun Application.configureVdoRouting() {
             call.respond(JoinController.instant.get(queueCode))
         }
         get("/join/queue_input_test") {
+            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 3000))
             call.respond(JoinController.instant.getTest())
         }
         get("/join/queue_response_test") {
+            call.caching = CachingOptions(CacheControl.MaxAge(maxAgeSeconds = 3000))
             call.respond(JoinController.instant.getResponseTest())
         }
         /**
