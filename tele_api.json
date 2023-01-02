@@ -156,7 +156,7 @@
                     "Create Service"
                 ],
                 "summary": "อัพเดทข้อมูล queue_code",
-                "description": "อัพเดทข้อมูล queue_code โดยที่รหัส queue_code กับใน json body รหัส queue_code ต้องตรงกัน",
+                "description": "อัพเดทข้อมูล queue_code โดยที่รหัส queue_code กับใน json body รหัส queue_code ต้องตรงกัน และ ไม่สามารถ update ย้อนหลังห้องที่ จบไปแล้ว(เลยเวลา end_time)",
                 "parameters": [
                     {
                         "name": "queue_code",
