@@ -28,9 +28,9 @@
             },
             "api-external-access-code": {
                 "type": "apiKey",
-                "name": "api-key",
+                "name": "api-external-access-code",
                 "in": "header",
-                "description": "api-key สำหรับใช้งาน api"
+                "description": "api-external-access-code สำหรับใช้งาน api V2"
             }
         },
         "schemas": {
