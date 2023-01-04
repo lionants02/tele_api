@@ -13,11 +13,20 @@
     "security": [
         {
             "api-key": []
+        },
+        {
+            "api-external-access-code": []
         }
     ],
     "components": {
         "securitySchemes": {
             "api-key": {
+                "type": "apiKey",
+                "name": "api-key",
+                "in": "header",
+                "description": "api-key สำหรับใช้งาน api"
+            },
+            "api-external-access-code": {
                 "type": "apiKey",
                 "name": "api-key",
                 "in": "header",
@@ -51,6 +60,55 @@
                 "properties": {
                     "property": {
                         "$ref": "#/components/schemas/joinQueueRequest"
+                    },
+                    "createAt": {
+                        "type": "string",
+                        "description": "เวลาที่ create object",
+                        "example": "2022-12-27T15:16:11.866697600"
+                    },
+                    "updateAt": {
+                        "type": "string",
+                        "description": "เวลาที่ update object",
+                        "example": "2022-12-27T15:16:11.866697600"
+                    },
+                    "joinLink": {
+                        "type": "string",
+                        "description": "Link สำหรับเข้าห้องประชุม",
+                        "example": "https://examle.hii.in.th/con/?t=tt0008&name=x"
+                    }
+                }
+            },
+            "joinQueue2Request": {
+                "type": "object",
+                "description": "ข้อมูลสำหรับขอสร้างห้อง vdo conference",
+                "properties": {
+                    "queue_code": {
+                        "type": "string",
+                        "description": "รหัส queue_code ต้องไม่ซ้ำกัน ถ้าซ้ำกันจะเป็นการ update ข้อมูลเดิม",
+                        "example": "sddfe453q"
+                    },
+                    "reserve_date": {
+                        "type": "string",
+                        "description": "วันที่เริ่มใช้ห้อง vdo UTC+0",
+                        "example": "2023-01-04"
+                    },
+                    "reserve_time": {
+                        "type": "string",
+                        "description": "เวลาที่เริ่มใช้ห้องประชุม UTC+0",
+                        "example": "19:30:00"
+                    },
+                    "duration": {
+                        "type": "number",
+                        "description": "จำนวนนาทีที่ใช้ห้องประชุม",
+                        "example": 30
+                    }
+                }
+            },
+            "joinQueue2Response": {
+                "type": "object",
+                "properties": {
+                    "property": {
+                        "$ref": "#/components/schemas/joinQueue2Request"
                     },
                     "createAt": {
                         "type": "string",
@@ -104,7 +162,7 @@
                     "400": {
                         "description": "รหัส queue_code อาจจะซ้ำ ดูจาก message"
                     },
-                    "500":{
+                    "500": {
                         "description": "Server Error"
                     }
                 }
@@ -199,6 +257,44 @@
                     },
                     "500": {
                         "description": "Server Error "
+                    }
+                }
+            }
+        },
+        "/join/queuev2": {
+            "post": {
+                "tags": [
+                    "Create Service V2"
+                ],
+                "description": "ขอสร้าง Link สำหรับใช้งานห้องประชุม ใช้โซนเวลาเป็น UTC+0",
+                "summary": "สร้าง Link ประชุม",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/joinQueue2Request"
+                            }
+                        }
+                    },
+                    "required": true,
+                    "description": "ข้อมูลที่ใช้สรำหรับการสร้างห้องประชุม"
+                },
+                "responses": {
+                    "201": {
+                        "description": "ข้อมูลที่ใช้สำหรับเข้าห้องประชุม",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/joinQueue2Response"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "รหัส queue_code อาจจะซ้ำ ดูจาก message"
+                    },
+                    "500": {
+                        "description": "Server Error"
                     }
                 }
             }
