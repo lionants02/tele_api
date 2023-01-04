@@ -15,6 +15,7 @@ import th.nstda.thongkum.tele_api.activity_log.ActivityLogController
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
+import th.nstda.thongkum.tele_api.services.conference.join.JoinQueue2Data
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueData
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 import th.nstda.thongkum.tele_api.services.cron.CronTaskController
@@ -34,6 +35,22 @@ fun Application.configureVdoRouting() {
                     ActivityLogController.instant.logQueue(
                         joinQueue.queue_code, CREATE, getHeaderLog(call)
                     ) { "start:${joinQueue.start_time} end:${joinQueue.end_time}" }
+                }
+                launch {
+                    call.caching = CachingOptions(CacheControl.NoCache(null))
+                    call.respond(HttpStatusCode.Created, create)
+                }
+            }
+        }
+        post("/join/queuev2") {
+            require(call.request.header("api-external-access-code") == config.apiKey) { "API KEY Not cCC" }
+            val joinQueue = call.receive<JoinQueue2Data>()
+            val create = JoinController.instant.postV2(joinQueue)
+            runBlocking {
+                launch {
+                    ActivityLogController.instant.logQueue(
+                        joinQueue.queue_code, CREATE, getHeaderLog(call)
+                    ) { "start:${joinQueue.reserve_date}T${joinQueue.reserve_time}.000 duration:${joinQueue.duration}" }
                 }
                 launch {
                     call.caching = CachingOptions(CacheControl.NoCache(null))

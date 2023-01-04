@@ -13,6 +13,8 @@ import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.DurationUnit
+import kotlin.time.toDuration
 
 class JoinController : HikariCPConnection() {
     /**
@@ -31,10 +33,7 @@ class JoinController : HikariCPConnection() {
         val inputData = getTest()
         val now = Clock.System.now().plus(7.minutes).toLocalDateTime(TimeZone.UTC)
         return JoinQueueResponse(
-            inputData,
-            now,
-            now,
-            "https://examle.hii.in.th/${inputData.queue_code}"
+            inputData, now, now, "https://examle.hii.in.th/${inputData.queue_code}"
         )
     }
 
@@ -55,6 +54,34 @@ class JoinController : HikariCPConnection() {
                 JoinQueueExpose.mapResultSystem(it)
             }.first()
         }
+    }
+
+    fun postV2(join: JoinQueue2Data): JoinQueue2Response {
+        require(join.queue_code.isNotEmpty()) { "queue_code is empty" }
+        require(join.reserve_date.isNotEmpty()) { "reserve_date is empty" }
+        require(join.reserve_time.isNotEmpty()) { "reserve_time is empty" }
+        require(join.duration > 0) { "duration is ${join.duration} > 0" }
+        return try {
+            get(join.queue_code).let {
+                JoinQueue2Response(convertDataToData2(it.property), it.createAt, it.updateAt, it.joinLink)
+            }
+        } catch (ex: Exception) {
+            val instant = "${join.reserve_date}T${join.reserve_time}.000Z".toInstant()
+            val startTime = instant.toLocalDateTime(TimeZone.UTC)
+            val endTime = instant.plus(join.duration.toDuration(DurationUnit.MINUTES)).toLocalDateTime(TimeZone.UTC)
+            val createJoin = JoinQueueData(join.queue_code, startTime, endTime)
+            val result = post(createJoin)
+            JoinQueue2Response(convertDataToData2(result.property), result.createAt, result.updateAt, result.joinLink)
+        }
+    }
+
+    private fun convertDataToData2(join: JoinQueueData): JoinQueue2Data {
+        val instant = join.start_time.toInstant(TimeZone.UTC)
+        val dateTimeString = instant.toString()
+        val reserveDate = dateTimeString.substring(0, 10)
+        val reserveTime = dateTimeString.substring(11, 19)
+        val duration = (join.end_time.toInstant(TimeZone.UTC) - instant).toDateTimePeriod().minutes
+        return JoinQueue2Data(join.queue_code, reserveDate, reserveTime, duration)
     }
 
     /**
@@ -86,8 +113,7 @@ class JoinController : HikariCPConnection() {
             val message = ex.message
             if (message?.contains("duplicate key value violates unique constraint") == true) {
                 throw BadRequestException("Create duplicate queue code")
-            } else
-                throw ex
+            } else throw ex
         }
         return get(join.queue_code)
     }
