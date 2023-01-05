@@ -10,6 +10,7 @@ import org.jetbrains.exposed.sql.transactions.transaction
 import org.jetbrains.exposed.sql.update
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.db.HikariCPConnection
+import th.nstda.thongkum.tele_api.services.conference.join.Util.Companion.convertDataToData2
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -71,18 +72,15 @@ class JoinController : HikariCPConnection() {
             val endTime = instant.plus(join.duration.toDuration(DurationUnit.MINUTES)).toLocalDateTime(TimeZone.UTC)
             val createJoin = JoinQueueData(join.queue_code, startTime, endTime)
             val result = post(createJoin)
-            JoinQueue2Response(convertDataToData2(result.property), result.createAt, result.updateAt, result.joinLink)
+            JoinQueue2Response(
+                convertDataToData2(result.property),
+                result.createAt,
+                result.updateAt,
+                result.joinLink
+            )
         }
     }
 
-    private fun convertDataToData2(join: JoinQueueData): JoinQueue2Data {
-        val instant = join.start_time.toInstant(TimeZone.UTC)
-        val dateTimeString = instant.toString()
-        val reserveDate = dateTimeString.substring(0, 10)
-        val reserveTime = dateTimeString.substring(11, 19)
-        val duration = (join.end_time.toInstant(TimeZone.UTC) - instant).toDateTimePeriod().minutes
-        return JoinQueue2Data(join.queue_code, reserveDate, reserveTime, duration)
-    }
 
     /**
      * ข้อมูลสำหรับการจองใช้ vdo conference
