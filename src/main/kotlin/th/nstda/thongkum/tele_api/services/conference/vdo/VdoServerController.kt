@@ -10,19 +10,17 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
-import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.db.HikariCPConnection
+import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueSystemResponse
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduRest
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduSecret
-import kotlin.random.Random
 
 class VdoServerController : HikariCPConnection() {
+
     fun getServer(): VdoServerData {
-        val servers = getServers()
-        val rnd = Random.nextInt(0, servers.size)
-        return servers[rnd]
+        return Util.rndServerWithWeight(getServers())
     }
 
     fun getServers(): List<VdoServerData> {
