@@ -36,7 +36,7 @@ class ViduRest(private val viduSecret: ViduSecret) : Vidu {
     override fun getConnection(sessionName: String, name: String): String {
         return runBlocking {
 
-            val kurentoOptions = KurentoOptions(1000, 100, 1000, 100)
+            val kurentoOptions = KurentoOptions(250, 100, 250, 100)
             // val data ="{\"clientData\":\"Participant73\"}"
             val requestConnection = RequestConnection("WEBRTC", null, false, "PUBLISHER", kurentoOptions)
             val response = httpClient.post("${viduSecret.apiLink}/sessions/$sessionName/connection") {
