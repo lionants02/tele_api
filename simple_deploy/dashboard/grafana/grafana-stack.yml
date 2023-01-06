@@ -1,0 +1,24 @@
+version: "3.4"
+
+services:
+  dashboard:
+    image: "grafana/grafana-oss:9.3.2-ubuntu"
+    restart: always
+    ports:
+      - 3000:3000
+    volumes:
+      - "/data/tele-api/grafana/datasources:/etc/grafana/provisioning/datasources:rw"
+      - "/data/tele-api/grafana/lib_grafana:/var/lib/grafana:rw"
+      - "/data/tele-api/grafana/grafana.ini:/etc/grafana/grafana.ini:rw"
+      - "/data/tele-api/grafana/dashboard:/etc/grafana/provisioning/dashboards:rw"
+    deploy:
+      resources:
+        limits:
+          cpus: "2"
+          memory: 1024M
+    healthcheck:
+      test: ["CMD", "curl", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+      start_period: 40s
