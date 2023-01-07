@@ -36,8 +36,8 @@ class VdoServerController : HikariCPConnection() {
      * สร้างห้องประชุม vdo
      */
     fun creteSession(sessionName: String) {
-        val check: JoinQueueSystemResponse = JoinController.instant.getSystemDetail(sessionName)
-        creteSession(sessionName, check)
+        val check: JoinQueueSystemResponse = JoinController.instant.getSystemDetail(sessionName.trim())
+        creteSession(sessionName.trim(), check)
     }
 
     fun creteSession(sessionName: String, check: JoinQueueSystemResponse) {
@@ -45,13 +45,13 @@ class VdoServerController : HikariCPConnection() {
         require(checkTime(check, now)) { "อยู่ขอบเขตนอกเวลาที่สร้างห้อง out of datetime" }
 
         val myVidu = ViduRest(ViduSecret(check.apiVdo, check.secretVdo))
-        if (myVidu.haveSession(sessionName)) {
+        if (myVidu.haveSession(sessionName.trim())) {
             log.warn("มี session $sessionName อยู่ในระบบแล้ว have session $sessionName in system")
             return
         }
 
         val properties: SessionProperties = SessionProperties.Builder()
-            .customSessionId(sessionName)
+            .customSessionId(sessionName.trim())
             .recordingMode(RecordingMode.MANUAL)
             .build()
         val vidu = OpenVidu(check.apiVdo, check.secretVdo)
@@ -61,10 +61,10 @@ class VdoServerController : HikariCPConnection() {
     }
 
     fun createUserWebRTCToken(sessionName: String): String {
-        val check = JoinController.instant.getSystemDetail(sessionName)
-        creteSession(sessionName, check)
+        val check = JoinController.instant.getSystemDetail(sessionName.trim())
+        creteSession(sessionName.trim(), check)
         val myVidu = ViduRest(ViduSecret(check.apiVdo, check.secretVdo))
-        return myVidu.getConnection(sessionName, "x")
+        return myVidu.getConnection(sessionName.trim(), "x")
     }
 
     /**
