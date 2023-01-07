@@ -2,13 +2,19 @@
 version: "3.4"
 services:
   tele_api:
-    image: "lionants02/tele_api:a1"
+    image: "lionants02/tele_api:a23"
     restart: always
     ports:
       - "12384:8080"
     volumes:
       - "./db.properties:/nstda/tele_api/hikarisimple.properties:ro"
     env_file: ./.env
+    healthcheck:
+      test: [ "CMD", "curl","--fail" ,"http://127.0.0.1:8080" ]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     deploy:
       resources:
         limits:
@@ -23,7 +29,7 @@ services:
       - "./data:/var/lib/postgresql/data:rw"
     env_file: ./.env
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "postgres"]
+      test: [ "CMD", "pg_isready", "-U", "postgres" ]
       interval: 1m30s
       timeout: 10s
       retries: 3
