@@ -14,7 +14,7 @@ interface ActivityLog {
     }
 
     enum class ACTIVITY {
-        CREATE, UPDATE, DELETE, TOKEN
+        CREATE, UPDATE, DELETE, TOKEN, WARNING
     }
 
     data class ActivityHttpHeader(
