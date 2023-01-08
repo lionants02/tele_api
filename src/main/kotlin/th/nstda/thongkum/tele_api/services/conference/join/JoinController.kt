@@ -54,14 +54,33 @@ class JoinController : HikariCPConnection() {
         }
     }
 
-    fun postV2(join: JoinQueue2Data): JoinQueue2Response {
+    enum class CreateStatus {
+        /**
+         * มีข้อมูลเดิมอยู่แล้ว ส่งค่าเดิมกลับ
+         * ไม่สร้างข้อมูลใหม่
+         */
+        FOUND_OLD_OBJECT,
+
+        /**
+         * ไม่มีข้อมูลเดิมอยู่
+         * ทำการสร้างข้อมูลใหม่
+         */
+        CREATE_NEW_OBJECT
+    }
+
+    fun postV2(join: JoinQueue2Data): Pair<JoinQueue2Response, CreateStatus> {
         require(join.queue_code.trim().isNotEmpty()) { "queue_code is empty" }
         require(join.reserve_date.isNotEmpty()) { "reserve_date is empty" }
         require(join.reserve_time.isNotEmpty()) { "reserve_time is empty" }
         require(join.duration > 0) { "duration is ${join.duration} > 0" }
         return try {
             get(join.queue_code.trim()).let {
-                JoinQueue2Response(convertDataToData2(it.property), it.createAt, it.updateAt, it.joinLink)
+                JoinQueue2Response(
+                    convertDataToData2(it.property),
+                    it.createAt,
+                    it.updateAt,
+                    it.joinLink
+                ) to CreateStatus.FOUND_OLD_OBJECT
             }
         } catch (ex: Exception) {
             val instant = "${join.reserve_date}T${join.reserve_time}.000Z".toInstant()
@@ -74,7 +93,7 @@ class JoinController : HikariCPConnection() {
                 result.createAt,
                 result.updateAt,
                 result.joinLink
-            )
+            ) to CreateStatus.CREATE_NEW_OBJECT
         }
     }
 

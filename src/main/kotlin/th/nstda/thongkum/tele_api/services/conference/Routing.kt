@@ -15,6 +15,8 @@ import th.nstda.thongkum.tele_api.activity_log.ActivityLogController
 import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
+import th.nstda.thongkum.tele_api.services.conference.join.JoinController.CreateStatus.CREATE_NEW_OBJECT
+import th.nstda.thongkum.tele_api.services.conference.join.JoinController.CreateStatus.FOUND_OLD_OBJECT
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueue2Data
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueData
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
@@ -42,15 +44,31 @@ fun Application.configureVdoRouting() {
                 }
             }
         }
+
         post("/join/queuev2") {
             require(call.request.header("api-external-access-code") == config.apiKey) { "API KEY Not cCC" }
             val joinQueue = call.receive<JoinQueue2Data>()
-            val create = JoinController.instant.postV2(joinQueue)
+            val (create, status) = JoinController.instant.postV2(joinQueue)
             runBlocking {
                 launch {
-                    ActivityLogController.instant.logQueue(
-                        joinQueue.queue_code, CREATE, getHeaderLog(call)
-                    ) { "start:${joinQueue.reserve_date}T${joinQueue.reserve_time}.000 duration:${joinQueue.duration}" }
+                    val result = create.property
+                    when (status) {
+                        FOUND_OLD_OBJECT -> {
+                            ActivityLogController.instant.logQueue(
+                                result.queue_code, WARNING, getHeaderLog(call)
+                            ) {
+                                "Duplicate queue_code can't create new return with old object. " +
+                                        "Old body start:${result.reserve_date}T${result.reserve_time}.000 duration:${result.duration}. " +
+                                        "New body start:${joinQueue.reserve_date}T${joinQueue.reserve_time}.000 duration:${joinQueue.duration}"
+                            }
+                        }
+
+                        CREATE_NEW_OBJECT -> {
+                            ActivityLogController.instant.logQueue(
+                                result.queue_code, CREATE, getHeaderLog(call)
+                            ) { "start:${result.reserve_date}T${result.reserve_time}.000 duration:${result.duration}" }
+                        }
+                    }
                 }
                 launch {
                     call.caching = CachingOptions(CacheControl.NoCache(null))
@@ -75,7 +93,6 @@ fun Application.configureVdoRouting() {
                     call.respond(HttpStatusCode.Created, update)
                 }
             }
-
         }
         get("/join/queue") {
             require(call.request.header("api-key") == config.apiKey) { "API KEY Not cCC" }
