@@ -84,8 +84,8 @@
                 "properties": {
                     "queue_code": {
                         "type": "string",
-                        "description": "รหัส queue_code ต้องไม่ซ้ำกัน ถ้าซ้ำกันจะเป็นการ update ข้อมูลเดิม",
-                        "example": "sddfe453q"
+                        "description": "รหัส queue_code รูปแบบ UUID ต้องไม่ซ้ำกัน ถ้าซ้ำจะส่งคืนข้อมูลเก่า",
+                        "example": "eb5fbf52-a588-400a-bb20-9233319cddd9"
                     },
                     "reserve_date": {
                         "type": "string",
