@@ -123,7 +123,7 @@
                     "joinLink": {
                         "type": "string",
                         "description": "Link สำหรับเข้าห้องประชุม",
-                        "example": "https://examle.hii.in.th/con/?t=tt0008&name=x"
+                        "example": "https://examle.hii.in.th/con/?t=eb5fbf52-a588-400a-bb20-9233319cddd9&name=x"
                     }
                 }
             }
