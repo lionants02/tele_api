@@ -9,6 +9,7 @@ import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.services.conference.join.Util.Companion.convertDataToData2
 import th.nstda.thongkum.tele_api.services.conference.vdo.VdoServerController
+import java.util.UUID
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.DurationUnit
@@ -72,6 +73,7 @@ class JoinController : HikariCPConnection() {
         require(join.queue_code.trim().isNotEmpty()) { "queue_code is empty" }
         require(join.reserve_date.isNotEmpty()) { "reserve_date is empty" }
         require(join.reserve_time.isNotEmpty()) { "reserve_time is empty" }
+        require(UUID.fromString(join.queue_code) != null) { "${join.queue_code} convert to UUID Error" }
         require(join.duration > 0) { "duration is ${join.duration} > 0" }
         return try {
             get(join.queue_code.trim()).let {
