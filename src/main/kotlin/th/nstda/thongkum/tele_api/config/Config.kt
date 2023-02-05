@@ -9,4 +9,5 @@ interface Config {
     val hikariConfigFile: String
     val frontEnd: String
     val apiKey: String
+    val enterEarlySec: Int
 }

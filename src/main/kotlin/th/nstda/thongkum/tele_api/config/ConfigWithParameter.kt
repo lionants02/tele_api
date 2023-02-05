@@ -19,8 +19,11 @@ class ConfigWithParameter(args: Array<String>) : Config {
     @Option(name = "-front_end", usage = "front end link https://example.hii.in.th")
     private var _frontEnd = ""
 
-    @Option(name = "-api_key", usage = "api_key")
+    @Option(name = "-api_key", usage = "-api_key")
     private var _apiKey = ""
+    
+    @Option(name = "-enter_early_sec", usage = "-enter_early_sec <sec>")
+    private var _enterEarlySec = ""
 
 
     override val openviduDefaultUrl: String
@@ -39,7 +42,8 @@ class ConfigWithParameter(args: Array<String>) : Config {
 
     override val apiKey: String
         get() = _apiKey.ifBlank { "API_KEY".systemEnv }.ifBlank { "bBIFF5zkWq2oleJTVV1OviKCvSFkSCrguHGB" }
-
+    override val enterEarlySec: Int
+        get() = (_enterEarlySec.ifBlank { "300" }).toInt()
     private val String.systemEnv: String
         get() = System.getenv(this) ?: ""
 

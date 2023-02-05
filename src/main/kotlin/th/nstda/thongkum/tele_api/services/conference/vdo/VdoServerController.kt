@@ -10,12 +10,15 @@ import kotlinx.datetime.toLocalDateTime
 import org.jetbrains.exposed.sql.SchemaUtils
 import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
+import th.nstda.thongkum.tele_api.config
 import th.nstda.thongkum.tele_api.db.HikariCPConnection
 import th.nstda.thongkum.tele_api.getLogger
 import th.nstda.thongkum.tele_api.services.conference.join.JoinController
 import th.nstda.thongkum.tele_api.services.conference.join.JoinQueueSystemResponse
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduRest
 import th.nstda.thongkum.tele_api.services.conference.vdo.vidu.ViduSecret
+import kotlin.time.DurationUnit.SECONDS
+import kotlin.time.toDuration
 
 class VdoServerController : HikariCPConnection() {
 
@@ -41,7 +44,9 @@ class VdoServerController : HikariCPConnection() {
     }
 
     fun creteSession(sessionName: String, check: JoinQueueSystemResponse) {
-        val now = Clock.System.now().toLocalDateTime(TimeZone.UTC)
+        val now = Clock.System.now()
+            .plus(config.enterEarlySec.toDuration(SECONDS)) // เข้าก่อนเวลากี่วิ
+            .toLocalDateTime(TimeZone.UTC)
         require(checkTime(check, now)) { "อยู่ขอบเขตนอกเวลาที่สร้างห้อง out of datetime" }
 
         val myVidu = ViduRest(ViduSecret(check.apiVdo, check.secretVdo))
