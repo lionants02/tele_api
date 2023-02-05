@@ -11,16 +11,23 @@ import th.nstda.thongkum.tele_api.plugins.configureSerialization
 import th.nstda.thongkum.tele_api.services.conference.configureVdoRouting
 
 private var privateConfig: Config? = null
-val config: Config get() =
-    if (privateConfig != null)
-        privateConfig!!
-    else
-        ConfigWithParameter(arrayOf())
+val config: Config
+    get() =
+        if (privateConfig != null)
+            privateConfig!!
+        else
+            ConfigWithParameter(arrayOf())
+
 fun main(args: Array<String>) {
     privateConfig = ConfigWithParameter(args)
-    getLogger(Unit::class.java).info("vidu url ${config.openviduDefaultUrl} ${config.openviduDefaultSecret}")
+    val log = getLogger(Unit::class.java)
+    log.info("vidu url ${config.openviduDefaultUrl} ${config.openviduDefaultSecret}")
     embeddedServer(Netty, port = 8080, host = "0.0.0.0", module = Application::module)
         .start(wait = true)
+}
+
+fun injectConfig(config: Config) {
+    privateConfig = config
 }
 
 fun Application.module() {

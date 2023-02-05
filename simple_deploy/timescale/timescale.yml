@@ -1,0 +1,26 @@
+version: "3.4"
+
+services:
+  tele-activity-log:
+    image: "timescale/timescaledb:2.9.1-pg14"
+    restart: always
+    ports:
+      - 10296:5432
+    volumes:
+      - "/data/tele_api/activity_log/timescale:/var/lib/postgresql/data:rw"
+    environment:
+      POSTGRES_PASSWORD: changemexxx
+      TS_TUNE_MEMORY: 2GB
+      TS_TUNE_NUM_CPUS: 2
+      TS_TUNE_MAX_CONNS: 100
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 1m30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 2100M

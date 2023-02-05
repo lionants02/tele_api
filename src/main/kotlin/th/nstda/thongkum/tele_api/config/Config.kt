@@ -8,4 +8,6 @@ interface Config {
     val openviduDefaultSecret: String
     val hikariConfigFile: String
     val frontEnd: String
+    val apiKey: String
+    val enterEarlySec: Int
 }

@@ -7,8 +7,8 @@ import kotlinx.serialization.Serializable
  * ข้อมูลใช้ตอน response ระบบห้อง vdo
  */
 @Serializable
-data class JoinQueueResponse(
-    val property: JoinQueueData,
+data class JoinQueue2Response(
+    val property: JoinQueue2Data,
     val createAt: LocalDateTime,
     val updateAt: LocalDateTime,
     var joinLink: String

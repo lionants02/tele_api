@@ -1,4 +1,4 @@
-package th.nstda.thongkum.tele_api.services.conference.db
+package th.nstda.thongkum.tele_api.db
 
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
